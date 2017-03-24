@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pe4nik.entity.User;
 import pe4nik.entity.Word;
-import pe4nik.service.UserService;
-import pe4nik.service.WordService;
+import pe4nik.service.ServiceImpl;
 
 import java.util.List;
 
@@ -17,39 +16,37 @@ import java.util.List;
  */
 @RestController
 public class Controller {
-    
-    @Autowired
-    WordService wordService;
 
     @Autowired
-    UserService userService;
+    ServiceImpl serviceImpl;
+
+//    @Autowired
+//    UserService userService;
 
     @RequestMapping(value = "/word/{id}")
     @ResponseBody
     public Word getWord(@PathVariable Long id) {
-
-        return wordService.getWord(id);
+        return serviceImpl.getWord(id);
     }
 
 
     @RequestMapping(value = "/words")
     @ResponseBody
     public List<Word> getAllWords() {
-
-        return wordService.getAllWords();
+        return serviceImpl.getAllWords();
     }
 
 
     @RequestMapping(value = "/user/{id}")
     @ResponseBody
-    public User getById(Long id) {
-        return userService.getById(id);
+    public User getUser(@PathVariable Long id) {
+        return serviceImpl.getUser(id);
     }
 
 
-    @RequestMapping(value = "/users/")
+    @RequestMapping(value = "/users")
     @ResponseBody
     public List<User> getAllUsers() {
-        return userService.getAllUsers();
+        return serviceImpl.getAllUsers();
     }
 }

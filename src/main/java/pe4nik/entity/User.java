@@ -15,19 +15,24 @@ public class User {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "username")
-    private String word;
+    private String username;
 
     @Column(name = "password")
-    private String value;
+    private String password;
+
 
     public User() {
     }
 
-    public User(Long id, String word, String value) {
+    public User(Long id, String email, String username, String password) {
         this.id = id;
-        this.word = word;
-        this.value = value;
+        this.email = email;
+        this.username = username;
+        this.password = password;
     }
 
     public Long getId() {
@@ -38,19 +43,27 @@ public class User {
         this.id = id;
     }
 
-    public String getWord() {
-        return word;
+    public String getEmail() {
+        return email;
     }
 
-    public void setWord(String word) {
-        this.word = word;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getValue() {
-        return value;
+    public String getUsername() {
+        return username;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
