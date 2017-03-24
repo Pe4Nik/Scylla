@@ -5,24 +5,26 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Created by Pe4Nik on 24.03.2017.
+ */
 @Entity
-@Table(name = "words")
-//@Proxy(lazy = false)
-public class Word {
+@Table(name = "users")
+public class User {
     @Id
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "word")
+    @Column(name = "username")
     private String word;
 
-    @Column(name = "value")
+    @Column(name = "password")
     private String value;
 
-    public Word() {
+    public User() {
     }
 
-    public Word(Long id, String word, String value) {
+    public User(Long id, String word, String value) {
         this.id = id;
         this.word = word;
         this.value = value;
@@ -40,7 +42,9 @@ public class Word {
         return word;
     }
 
-    public void setWord(String word) { this.word = word; }
+    public void setWord(String word) {
+        this.word = word;
+    }
 
     public String getValue() {
         return value;

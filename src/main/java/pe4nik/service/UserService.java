@@ -3,27 +3,27 @@ package pe4nik.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pe4nik.dao.WordDao;
-import pe4nik.entity.Word;
+import pe4nik.dao.UserDao;
+import pe4nik.entity.User;
 
 import java.util.List;
 
 /**
- * Created by Pe4Nik on 21.03.2017.
+ * Created by Pe4Nik on 24.03.2017.
  */
 @Service
-public class WordService {
+public class UserService {
 
     @Autowired
-    private WordDao wordDao;
+    private UserDao userDao;
 
     @Transactional
-    public Word getWord(Long id) {
-        return wordDao.findOne(id);
+    public User getById(Long id) {
+        return userDao.findOne(id);
     }
 
     @Transactional
-    public List<Word> getAllWords() {
-        return wordDao.findAll();
+    public List<User> getAllUsers() {
+        return userDao.findAll();
     }
 }
