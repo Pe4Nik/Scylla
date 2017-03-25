@@ -41,4 +41,21 @@ public class ServiceImpl {
     public List<User> getAllUsers() {
         return userDao.findAll();
     }
+
+    @Transactional
+    public User findUserByEmail(String email) {
+        return userDao.findByEmail(email);
+    }
+
+    @Transactional
+    public String saveUser(User user) {
+        //id must be 0
+        user.setId(0L);
+        if (userDao.findByEmail(user.getEmail()) == null ||
+                !user.getEmail().equals(userDao.findByEmail(user.getEmail()).getEmail())) {
+            userDao.save(user);
+            return "Ok";
+        }
+        return "User with this email " + user.getEmail() + " already exist!";
+    }
 }
