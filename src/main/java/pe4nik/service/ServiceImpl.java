@@ -3,8 +3,10 @@ package pe4nik.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe4nik.dao.TextDao;
 import pe4nik.dao.UserDao;
 import pe4nik.dao.WordDao;
+import pe4nik.entity.Text;
 import pe4nik.entity.User;
 import pe4nik.entity.Word;
 
@@ -21,6 +23,9 @@ public class ServiceImpl {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private TextDao textDao;
 
     @Transactional
     public Word getWord(Long id) {
@@ -57,5 +62,26 @@ public class ServiceImpl {
             return "Ok";
         }
         return "User with this email " + user.getEmail() + " already exist!";
+    }
+
+    @Transactional
+    public Text getText(Long id) {
+        return textDao.findOne(id);
+    }
+
+    @Transactional
+    public String saveText(Text text) {
+        text.setId(0L);
+        if(!text.getText().isEmpty()) {
+            textDao.save(text);
+            return "Ok";
+        }
+        else
+            return "Text is empty";
+    }
+
+    @Transactional
+    public List getAllTexts() {
+        return textDao.findAll();
     }
 }

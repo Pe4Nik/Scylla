@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pe4nik.dao.UserDao;
 import pe4nik.dao.WordDao;
+import pe4nik.entity.Text;
 import pe4nik.entity.User;
 import pe4nik.entity.Word;
 import pe4nik.service.ServiceImpl;
@@ -19,13 +20,12 @@ public class Controller {
     @Autowired
     ServiceImpl serviceImpl;
 
-//    @Autowired
-//    UserService userService;
     @Autowired
     private UserDao userDao;
 
     @Autowired
     private WordDao wordDao;
+
 
     @RequestMapping(value = "/word/{id}")
     @ResponseBody
@@ -64,9 +64,31 @@ public class Controller {
         return "Wrong password";
     }
 
+
     @RequestMapping(value = "/saveuser", method = RequestMethod.POST)
     @ResponseBody
     public String saveUser(@RequestBody User user) {
         return serviceImpl.saveUser(user);
+    }
+
+
+    @RequestMapping(value = "/text/{id}")
+    @ResponseBody
+    public Text getText(@PathVariable Long id) {
+        return serviceImpl.getText(id);
+    }
+
+
+    @RequestMapping(value = "/savetext", method = RequestMethod.POST)
+    @ResponseBody
+    public String saveText(@RequestBody Text text) {
+        return serviceImpl.saveText(text);
+    }
+
+
+    @RequestMapping(value = "/texts")
+    @ResponseBody
+    public List getAllTexts() {
+        return serviceImpl.getAllTexts();
     }
 }
