@@ -7,6 +7,9 @@ import pe4nik.dao.WordDao;
 import pe4nik.entity.Text;
 import pe4nik.entity.User;
 import pe4nik.entity.Word;
+import pe4nik.registration.LoginUser;
+import pe4nik.registration.RegUser;
+import pe4nik.registration.Response;
 import pe4nik.service.ServiceImpl;
 
 import java.util.List;
@@ -57,18 +60,26 @@ public class Controller {
 
     @RequestMapping(value = "/checkuser", method = RequestMethod.POST)
     @ResponseBody
-    public String checkUser(@RequestBody User user) {
+    public Response checkUser(@RequestBody LoginUser user) {
+        Response response = new Response();
         User foundUser = serviceImpl.findUserByEmail(user.getEmail());
-        if (foundUser != null && foundUser.getPassword().equals(user.getPassword()))
-            return "Ok";
-        return "Wrong password";
+        if (foundUser == null) {
+            response.setValue("Wrong email");
+            return response;
+        }
+        if (!foundUser.getPassword().equals(user.getPassword())) {
+            response.setValue("Wrong password");
+            return response;
+        }
+        response.setValue("Ok, "+foundUser.getUsername());
+        return response;
     }
 
 
     @RequestMapping(value = "/saveuser", method = RequestMethod.POST)
     @ResponseBody
-    public String saveUser(@RequestBody User user) {
-        return serviceImpl.saveUser(user);
+    public Response saveUser(@RequestBody RegUser user) {
+        return serviceImpl.saveUser(new User(null,user.getEmail(),user.getUsername(),user.getPassword()));
     }
 
 

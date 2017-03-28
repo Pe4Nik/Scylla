@@ -9,4 +9,5 @@ import pe4nik.entity.User;
 @Repository
 public interface UserDao extends JpaRepository<User, Long> {
     User findByEmail(String email);
+    User findByUsername(String username);
 }

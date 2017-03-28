@@ -9,6 +9,7 @@ import pe4nik.dao.WordDao;
 import pe4nik.entity.Text;
 import pe4nik.entity.User;
 import pe4nik.entity.Word;
+import pe4nik.registration.Response;
 
 import java.util.List;
 
@@ -53,15 +54,19 @@ public class ServiceImpl {
     }
 
     @Transactional
-    public String saveUser(User user) {
+    public Response saveUser(User user) {
         //id must be 0
+        Response response = new Response();
         user.setId(0L);
         if (userDao.findByEmail(user.getEmail()) == null ||
                 !user.getEmail().equals(userDao.findByEmail(user.getEmail()).getEmail())) {
             userDao.save(user);
-            return "Ok";
+            //return "Ok";
+            response.setValue("Ok");
+            return response;
         }
-        return "User with this email " + user.getEmail() + " already exist!";
+        response.setValue("\"User with this email \" + user.getEmail() + \" already exist!\"");
+        return response;
     }
 
     @Transactional
