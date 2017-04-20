@@ -1,9 +1,7 @@
 package pe4nik.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 @Table(name = "words")
@@ -19,13 +17,18 @@ public class Word {
     @Column(name = "value")
     private String value;
 
+    @Column(name = "audio")
+    @Lob
+    private Blob audio;
+
     public Word() {
     }
 
-    public Word(Long id, String word, String value) {
+    public Word(Long id, String word, String value, Blob audio) {
         this.id = id;
         this.word = word;
         this.value = value;
+        this.audio = audio;
     }
 
     public Long getId() {
@@ -48,5 +51,13 @@ public class Word {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Blob getAudio() {
+        return audio;
+    }
+
+    public void setAudio(Blob audio) {
+        this.audio = audio;
     }
 }

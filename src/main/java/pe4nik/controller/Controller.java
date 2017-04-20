@@ -1,5 +1,6 @@
 package pe4nik.controller;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pe4nik.dao.UserDao;
@@ -10,8 +11,12 @@ import pe4nik.entity.Word;
 import pe4nik.registration.LoginUser;
 import pe4nik.registration.RegUser;
 import pe4nik.registration.Response;
+import pe4nik.registration.ResponseWord;
 import pe4nik.service.ServiceImpl;
 
+import java.io.*;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -32,8 +37,35 @@ public class Controller {
 
     @RequestMapping(value = "/word/{id}")
     @ResponseBody
-    public Word getWord(@PathVariable Long id) {
-        return serviceImpl.getWord(id);
+    public ResponseWord getWord(@PathVariable Long id) {
+        Word word= serviceImpl.getWord(id);
+        ResponseWord responseWord;
+        if(word.getAudio() != null) {
+            Blob blob = word.getAudio();
+            int blobLength = 0;
+            byte[] blobAsBytes = null;
+            try {
+                blobLength = (int) blob.length();
+                blobAsBytes = blob.getBytes(1, blobLength);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            responseWord = new ResponseWord(word.getWord(),
+                    word.getValue(), Base64.encodeBase64String(blobAsBytes));
+            File outputFile = null;
+            try {
+                outputFile = new File("C:\\Users\\Pe4Nik\\Downloads\\somefile.flac");
+                FileOutputStream fileoutputstream = new FileOutputStream(outputFile);
+                fileoutputstream.write(blobAsBytes);
+                fileoutputstream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else
+            responseWord = new ResponseWord(word.getWord(),
+                    word.getValue(), null);
+        return responseWord;
     }
 
 
@@ -101,5 +133,40 @@ public class Controller {
     @ResponseBody
     public List getAllTexts() {
         return serviceImpl.getAllTexts();
+    }
+
+    @RequestMapping(value = "/addaudio")
+    @ResponseBody
+    public List<Word> addAudio() {
+        List<Word> words = serviceImpl.getAllWords();
+        File[] files = new File("C:\\Users\\Pe4Nik\\Downloads\\eng-wcp-us_flac\\flac").listFiles();
+        int coincidence = 0;
+        for (Word word:words) {
+            for (File file:files) {
+                if(word.getWord().equals(file.getName().substring(6,file.getName().length()-5))) {
+                    coincidence++;
+                    byte[] bFile = new byte[(int) file.length()];
+                    try {
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        fileInputStream.read(bFile);
+                        fileInputStream.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Blob blob= null;
+                    try {
+                        blob = new javax.sql.rowset.serial.SerialBlob(bFile);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    word.setAudio(blob);
+                    wordDao.save(word);
+                }
+            }
+        }
+        System.out.println("============ "+coincidence+" ===========");
+        return serviceImpl.getAllWords();
     }
 }
