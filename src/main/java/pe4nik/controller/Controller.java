@@ -10,13 +10,13 @@ import pe4nik.entity.User;
 import pe4nik.entity.Word;
 import pe4nik.registration.LoginUser;
 import pe4nik.registration.RegUser;
-import pe4nik.registration.Response;
-import pe4nik.registration.ResponseWord;
+import pe4nik.registration.ResponseString;
 import pe4nik.service.ServiceImpl;
 
-import java.io.*;
-import java.sql.Blob;
-import java.sql.SQLException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,39 +34,64 @@ public class Controller {
     @Autowired
     private WordDao wordDao;
 
-
-    @RequestMapping(value = "/word/{id}")
+    @RequestMapping(value = "/audio/{word}")
     @ResponseBody
-    public ResponseWord getWord(@PathVariable Long id) {
-        Word word= serviceImpl.getWord(id);
-        ResponseWord responseWord;
-        if(word.getAudio() != null) {
-            Blob blob = word.getAudio();
-            int blobLength = 0;
-            byte[] blobAsBytes = null;
+    public String getFile(@PathVariable String word) {
+        if(wordDao.findByWord(word).getAudio()) {
+            String catPath = "C:\\Users\\Pe4Nik\\Downloads\\eng-wcp-us_flac\\flac";
+            File file = new File(catPath+File.separator+"En-us-"+word+".flac");
+            byte[] bFile = new byte[(int) file.length()];
+            FileInputStream fileInputStream = null;
             try {
-                blobLength = (int) blob.length();
-                blobAsBytes = blob.getBytes(1, blobLength);
-            } catch (SQLException e) {
+                fileInputStream = new FileInputStream(file);
+                fileInputStream.read(bFile);
+                fileInputStream.close();
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            }
-            responseWord = new ResponseWord(word.getWord(),
-                    word.getValue(), Base64.encodeBase64String(blobAsBytes));
-            File outputFile = null;
-            try {
-                outputFile = new File("C:\\Users\\Pe4Nik\\Downloads\\somefile.flac");
-                FileOutputStream fileoutputstream = new FileOutputStream(outputFile);
-                fileoutputstream.write(blobAsBytes);
-                fileoutputstream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        } else
-            responseWord = new ResponseWord(word.getWord(),
-                    word.getValue(), null);
-        return responseWord;
+            return Base64.encodeBase64String(bFile);
+        }
+        else
+            return "Oh, shit!";
     }
+
+    @RequestMapping(value = "/word/{id}")
+    @ResponseBody
+    public Word getWord(@PathVariable Long id) {
+//        Word word= serviceImpl.getWord(id);
+//        ResponseWord responseWord;
+//        if(word.getAudio() != null) {
+//            Blob blob = word.getAudio();
+//            int blobLength = 0;
+//            byte[] blobAsBytes = null;
+//            try {
+//                blobLength = (int) blob.length();
+//                blobAsBytes = blob.getBytes(1, blobLength);
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//            responseWord = new ResponseWord(word.getWord(),
+//                    word.getValue(), Base64.encodeBase64String(blobAsBytes));
+//            File outputFile = null;
+//            try {
+//                outputFile = new File("C:\\Users\\Pe4Nik\\Downloads\\somefile.flac");
+//                FileOutputStream fileoutputstream = new FileOutputStream(outputFile);
+//                fileoutputstream.write(blobAsBytes);
+//                fileoutputstream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        } else
+//            responseWord = new ResponseWord(word.getWord(),
+//                    word.getValue(), null);
+//        return responseWord;
+        return serviceImpl.getWord(id);
+    }
+
+
 
 
     @RequestMapping(value = "/words")
@@ -92,25 +117,25 @@ public class Controller {
 
     @RequestMapping(value = "/checkuser", method = RequestMethod.POST)
     @ResponseBody
-    public Response checkUser(@RequestBody LoginUser user) {
-        Response response = new Response();
+    public ResponseString checkUser(@RequestBody LoginUser user) {
+        ResponseString responseString = new ResponseString();
         User foundUser = serviceImpl.findUserByEmail(user.getEmail());
         if (foundUser == null) {
-            response.setValue("Wrong email");
-            return response;
+            responseString.setValue("Wrong email");
+            return responseString;
         }
         if (!foundUser.getPassword().equals(user.getPassword())) {
-            response.setValue("Wrong password");
-            return response;
+            responseString.setValue("Wrong password");
+            return responseString;
         }
-        response.setValue("Ok, "+foundUser.getUsername());
-        return response;
+        responseString.setValue("Ok, "+foundUser.getUsername());
+        return responseString;
     }
 
 
     @RequestMapping(value = "/saveuser", method = RequestMethod.POST)
     @ResponseBody
-    public Response saveUser(@RequestBody RegUser user) {
+    public ResponseString saveUser(@RequestBody RegUser user) {
         return serviceImpl.saveUser(new User(null,user.getEmail(),user.getUsername(),user.getPassword()));
     }
 
@@ -140,33 +165,34 @@ public class Controller {
     public List<Word> addAudio() {
         List<Word> words = serviceImpl.getAllWords();
         File[] files = new File("C:\\Users\\Pe4Nik\\Downloads\\eng-wcp-us_flac\\flac").listFiles();
-        int coincidence = 0;
+        //int coincidence = 0;
         for (Word word:words) {
             for (File file:files) {
                 if(word.getWord().equals(file.getName().substring(6,file.getName().length()-5))) {
-                    coincidence++;
-                    byte[] bFile = new byte[(int) file.length()];
-                    try {
-                        FileInputStream fileInputStream = new FileInputStream(file);
-                        fileInputStream.read(bFile);
-                        fileInputStream.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Blob blob= null;
-                    try {
-                        blob = new javax.sql.rowset.serial.SerialBlob(bFile);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    word.setAudio(blob);
+                    //coincidence++;
+                    word.setAudio(true);
+                    //byte[] bFile = new byte[(int) file.length()];
+//
+                    //Blob bltry {
+//                        FileInputStream fileInputStream = new FileInputStream(file);
+//                        fileInputStream.read(bFile);
+//                        fileInputStream.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }ob= null;
+//                    try {
+//                        blob = new javax.sql.rowset.serial.SerialBlob(bFile);
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
+//                    word.setAudio(blob);
                     wordDao.save(word);
                 }
             }
         }
-        System.out.println("============ "+coincidence+" ===========");
+        //System.out.println("============ "+coincidence+" ===========");
         return serviceImpl.getAllWords();
     }
 }

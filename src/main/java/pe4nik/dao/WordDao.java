@@ -10,4 +10,5 @@ import pe4nik.entity.Word;
  */
 @Repository
 public interface WordDao extends JpaRepository<Word, Long>{
+    Word findByWord(String word);
 }

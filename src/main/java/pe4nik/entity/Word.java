@@ -1,7 +1,6 @@
 package pe4nik.entity;
 
 import javax.persistence.*;
-import java.sql.Blob;
 
 @Entity
 @Table(name = "words")
@@ -18,13 +17,12 @@ public class Word {
     private String value;
 
     @Column(name = "audio")
-    @Lob
-    private Blob audio;
+    private Boolean audio;
 
     public Word() {
     }
 
-    public Word(Long id, String word, String value, Blob audio) {
+    public Word(Long id, String word, String value, Boolean audio) {
         this.id = id;
         this.word = word;
         this.value = value;
@@ -53,11 +51,11 @@ public class Word {
         this.value = value;
     }
 
-    public Blob getAudio() {
+    public Boolean getAudio() {
         return audio;
     }
 
-    public void setAudio(Blob audio) {
+    public void setAudio(Boolean audio) {
         this.audio = audio;
     }
 }

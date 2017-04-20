@@ -3,13 +3,13 @@ package pe4nik.registration;
 /**
  * Created by Pe4Nik on 28.03.2017.
  */
-public class Response {
+public class ResponseString {
     private String value;
 
-    public Response() {
+    public ResponseString() {
     }
 
-    public Response(String value) {
+    public ResponseString(String value) {
         this.value = value;
     }
 
