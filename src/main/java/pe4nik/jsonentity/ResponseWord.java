@@ -1,4 +1,4 @@
-package pe4nik.registration;
+package pe4nik.jsonentity;
 
 /**
  * Created by Pe4Nik on 19.04.2017.

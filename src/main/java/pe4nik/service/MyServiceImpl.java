@@ -3,29 +3,33 @@ package pe4nik.service;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pe4nik.dao.TextDao;
 import pe4nik.dao.UserDao;
+import pe4nik.dao.UserDataDAO;
 import pe4nik.dao.WordDao;
 import pe4nik.entity.Text;
 import pe4nik.entity.User;
+import pe4nik.entity.UserData;
 import pe4nik.entity.Word;
-import pe4nik.registration.LoginUser;
-import pe4nik.registration.ResponseString;
+import pe4nik.jsonentity.LoginUser;
+import pe4nik.jsonentity.ResponseString;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Pe4Nik on 21.03.2017.
  */
-@Service("serviceImpl")
-public class ServiceImpl {
+@Service
+public class MyServiceImpl implements MyService{
 
     @Autowired
     public WordDao wordDao;
@@ -35,6 +39,38 @@ public class ServiceImpl {
 
     @Autowired
     public TextDao textDao;
+
+    @Autowired
+    public UserDataDAO userDataDAO;
+
+    @Transactional
+    public List<Word> getWords(List<Long> ids) {
+        List<Word> words = new ArrayList<>();
+        for (Long id:ids) {
+            words.add(wordDao.findOne(id));
+        }
+        return words;
+    }
+
+    @Transactional
+    public String getUserLearnedWords(String username) {
+        return userDataDAO.getOne(userDao.findByUsername(username).getId())
+                .getLearnedWords();
+    }
+
+    @Transactional
+    public void addUserLearnedWords(String learnedWords, String username) {
+        userDataDAO.save(new UserData(userDao.findByUsername(username).getId()
+                , learnedWords));
+    }
+
+    @Override
+    @Transactional
+    public void save(User user) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userDao.save(user);
+    }
 
     @Transactional
     public String getAudioFile(String word) {
@@ -106,7 +142,7 @@ public class ServiceImpl {
         user.setId(0L);
         if (userDao.findByEmail(user.getEmail()) == null ||
                 !user.getEmail().equals(userDao.findByEmail(user.getEmail()).getEmail())) {
-            userDao.save(user);
+            this.save(user);
             //return "Ok";
             responseString.setValue("Ok");
             return responseString;
@@ -121,14 +157,18 @@ public class ServiceImpl {
     }
 
     @Transactional
-    public String saveText(Text text) {
+    public ResponseString saveText(Text text) {
+        ResponseString responseString = new ResponseString();
         text.setId(0L);
         if(!text.getText().isEmpty()) {
             textDao.save(text);
-            return "Ok";
+            responseString.setValue("Ok");
+            return responseString;
         }
-        else
-            return "Text is empty";
+        else {
+            responseString.setValue("Text is empty");
+            return responseString;
+        }
     }
 
     @Transactional

@@ -1,4 +1,4 @@
-package pe4nik.registration;
+package pe4nik.jsonentity;
 
 
 public class RegUser {
