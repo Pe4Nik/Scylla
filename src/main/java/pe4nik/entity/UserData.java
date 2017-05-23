@@ -18,12 +18,24 @@ public class UserData {
     @Column(name = "learned_words")
     private String learnedWords;
 
+    @Column(name = "learned_texts")
+    private String learnedTexts;
+
+    @Column(name = "words_to_study")
+    private String wordsToStudy;
+
+    @Column(name = "progress")
+    private String progress;
+
     public UserData() {
     }
 
-    public UserData(Long id, String learnedWords) {
+    public UserData(Long id, String learnedWords, String learnedTexts, String wordsToStudy, String progress) {
         this.id = id;
         this.learnedWords = learnedWords;
+        this.learnedTexts = learnedTexts;
+        this.wordsToStudy = wordsToStudy;
+        this.progress = progress;
     }
 
     public Long getId() {
@@ -40,5 +52,29 @@ public class UserData {
 
     public void setLearnedWords(String learnedWords) {
         this.learnedWords = learnedWords;
+    }
+
+    public String getLearnedTexts() {
+        return learnedTexts;
+    }
+
+    public void setLearnedTexts(String learnedTexts) {
+        this.learnedTexts = learnedTexts;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+
+    public String getWordsToStudy() {
+        return wordsToStudy;
+    }
+
+    public void setWordsToStudy(String wordsToStudy) {
+        this.wordsToStudy = wordsToStudy;
     }
 }

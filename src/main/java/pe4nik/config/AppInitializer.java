@@ -23,6 +23,8 @@ public class AppInitializer implements WebApplicationInitializer {
         dispatcher.addMapping("/");
 
         servletContext.addListener(HttpSessionEventPublisher.class);
+        //session
+        //servletContext.addListener(new SessionListener());
     }
 
     private AnnotationConfigWebApplicationContext getContext() {

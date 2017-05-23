@@ -13,11 +13,25 @@ import java.util.List;
  */
 
 public interface MyService {
+    public String getUserWordsToStudy(String username);
+
+    public void addUserWordsToStudy(List<String> wordsToStudy, String username);
+
+    public String getProgress(String username);
+
+    public void setProgress(String newProgress, String username);
+
+    public List<Text> getTexts(List<Long> ids);
+
+    public String getUserLearnedTexts(String username);
+
+    public void addUserLearnedTexts(List<String> learnedTexts, String username);
+
     public List<Word> getWords(List<Long> ids);
 
     public String getUserLearnedWords(String username);
 
-    public void addUserLearnedWords(String learnedWords, String username);
+    public void addUserLearnedWords(List<String> learnedWords, String username);
 
     public void save(User user);
 

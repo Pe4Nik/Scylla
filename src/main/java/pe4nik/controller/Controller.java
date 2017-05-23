@@ -37,6 +37,58 @@ public class Controller {
     @Autowired
     private SessionRegistry sessionRegistry;
 
+
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public String getTestString()  {
+        return "";
+    }
+
+
+    @RequestMapping(value = "/getuserwordstostudy")
+    @ResponseBody
+    public List<Word> getUserWordsToStudy() {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        List<String> list = Arrays.asList(myService.getUserWordsToStudy(authentication.getName())
+                .split(","));
+        return myService.getWords(list.stream().map(Long::parseLong).collect(Collectors.toList()));
+    }
+
+    @RequestMapping(value = "/adduserwordstostudy", method = RequestMethod.POST)
+    @ResponseBody
+    public void addUserWordsToStudy(@RequestBody List<String> wordsToStudy) {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        myService.addUserWordsToStudy(wordsToStudy, authentication.getName());
+    }
+
+    @RequestMapping(value = "/getprogress")
+    @ResponseBody
+    public String getProgress() {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        return myService.getProgress(authentication.getName());
+    }
+
+    @RequestMapping(value = "/setprogress", method = RequestMethod.POST)
+    public void setProgress(@RequestBody String newProgress) {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        myService.setProgress(newProgress, authentication.getName());
+    }
+
+    @RequestMapping(value = "/getuserlearnedtexts")
+    @ResponseBody
+    public List<Text> getUserLearnedTexts() {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        List<String> list = Arrays.asList(myService.getUserLearnedTexts(authentication.getName())
+                .split(","));
+        return myService.getTexts(list.stream().map(Long::parseLong).collect(Collectors.toList()));
+    }
+
+    @RequestMapping(value = "/adduserlearnedtexts", method = RequestMethod.POST)
+    public void addUserLearnedTexts(@RequestBody List<String> learnedTexts) {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        myService.addUserLearnedTexts(learnedTexts, authentication.getName());
+    }
+
     @RequestMapping(value="/customlogout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = authenticationFacade.getAuthentication();
@@ -56,7 +108,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/adduserlearnedwords", method = RequestMethod.POST)
-    public void addUserLearnedWords(@RequestBody String learnedWords) {
+    public void addUserLearnedWords(@RequestBody List<String> learnedWords) {
         Authentication authentication = authenticationFacade.getAuthentication();
         myService.addUserLearnedWords(learnedWords, authentication.getName());
     }
@@ -73,7 +125,7 @@ public class Controller {
                 List<SessionInformation> activeUserSessions =
                         sessionRegistry.getAllSessions(principal,
                                 /* includeExpiredSessions */ false); // Should not return null;
-
+                //sessionRegistry.
                 if (!activeUserSessions.isEmpty()) {
                     // Do something with user
                     System.out.println(user);
@@ -83,16 +135,6 @@ public class Controller {
         System.out.println("Logged in users: " + allPrincipals.size());
         return allPrincipals;
     }
-
-
-    @RequestMapping(value = "/test")
-    @ResponseBody
-    public void getTestString()  {
-        Authentication authentication = authenticationFacade.getAuthentication();
-        System.out.println(authentication.getName());
-        //System.out.println(principal.getName());
-    }
-
 
     @RequestMapping(value = "/audio/{word}")
     @ResponseBody
@@ -105,9 +147,6 @@ public class Controller {
     public Word getWord(@PathVariable Long id) {
         return myService.getWord(id);
     }
-
-
-
 
     @RequestMapping(value = "/words")
     @ResponseBody
