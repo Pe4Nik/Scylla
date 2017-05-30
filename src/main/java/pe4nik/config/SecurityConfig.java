@@ -19,7 +19,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
  * Created by Pe4Nik on 03.05.2017.
  */
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = false)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic()
                 .and().sessionManagement().maximumSessions(3).sessionRegistry(sessionRegistry());
-                //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //managae number of sessions wisely
     }
 

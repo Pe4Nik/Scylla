@@ -13,6 +13,8 @@ import java.util.List;
  */
 
 public interface MyService {
+    public String getPreferable(String username);
+
     public String getUserWordsToStudy(String username);
 
     public void addUserWordsToStudy(List<String> wordsToStudy, String username);

@@ -1,5 +1,7 @@
 package pe4nik.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionInformation;
@@ -37,6 +39,8 @@ public class Controller {
     @Autowired
     private SessionRegistry sessionRegistry;
 
+    static Log log = LogFactory.getLog(Controller.class.getName());
+
 
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -44,6 +48,12 @@ public class Controller {
         return "";
     }
 
+    @RequestMapping(value = "/getpreferable")
+    @ResponseBody
+    public String getPreferable() {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        return myService.getPreferable(authentication.getName());
+    }
 
     @RequestMapping(value = "/getuserwordstostudy")
     @ResponseBody
@@ -92,6 +102,10 @@ public class Controller {
     @RequestMapping(value="/customlogout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = authenticationFacade.getAuthentication();
+        //
+        System.out.println("User \""+auth.getName()+"\" logged out");
+        log.info("User \""+auth.getName()+"\" logged out");
+        //
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -133,6 +147,7 @@ public class Controller {
             }
         }
         System.out.println("Logged in users: " + allPrincipals.size());
+        log.info("Logged in users: " + allPrincipals.size());
         return allPrincipals;
     }
 
@@ -172,6 +187,9 @@ public class Controller {
     @RequestMapping(value = "/checkuser", method = RequestMethod.POST)
     @ResponseBody
     public ResponseString checkUser(@RequestBody LoginUser user) {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        System.out.println("User \""+authentication.getName()+"\" logged in");
+        log.info("User \""+authentication.getName()+"\" logged in");
         return myService.checkUser(user);
     }
 

@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -82,6 +83,58 @@ public class MyServiceImpl implements MyService{
         userDataDAO.save(new UserData(userDao.findByUsername(username).getId()
                 , wordsIds, textsIds, wordsToStudy, progress));
     }
+
+    @Transactional
+    public String getPreferable(String username) {
+        if(userDataDAO.getOne(userDao.findByUsername(username).getId()).getProgress() != null) {
+            String[] strProgress = userDataDAO.getOne(userDao.findByUsername(username).getId())
+                    .getProgress().split(",");
+
+            HashMap<Integer, Integer> map = new HashMap<>();
+            int[] intProgress = {0,0,0,0};
+            for (int i = 0; i < strProgress.length; i++) {
+                intProgress[i] = Integer.parseInt(strProgress[i]);
+            }
+            String preferable = "";
+
+
+            for (int i = 0; i < intProgress.length; i++) {
+                int min = 0;
+                for(int j = 0; j < intProgress.length; j++) {
+                    if(!map.containsKey(j) && intProgress[j] < intProgress[min]) {
+                        min = j;
+                    }
+                    if(i == 3) {
+                        if(!map.containsKey(j)) {
+                            min = j;
+                        }
+                    }
+                }
+                map.put(min, Integer.parseInt(strProgress[min]));
+
+                switch (min) {
+                    case 0:
+                        preferable += "reading";
+                        break;
+                    case 1:
+                        preferable += "writing";
+                        break;
+                    case 2:
+                        preferable += "speaking";
+                        break;
+                    case 3:
+                        preferable += "listening";
+                        break;
+                }
+                if (i != 3)
+                    preferable += ", ";
+            }
+            return preferable;
+        }
+        else
+            return "";
+    }
+
 
     @Transactional
     public String getProgress(String username) {
